@@ -4,16 +4,15 @@ Docker image for `MinGW-w64 build environment` based on [Arch Linux][4]. The ima
 This script was inspired by [mdimura/docker-mingw-qt5][5]
 
 # Building docker image manually
-You can pull latest version of the image with:
+You can pull latest docker image with:
 ```bash
 sudo docker pull maxrd2/arch-mingw
 ```
 
 If you prefer to build it on your machine:
 ```bash
-mkdir tmp
-sudo docker build -t maxrd2/arch-mingw -f Dockerfile tmp
-rmdir tmp
+git clone https://github.com/maxrd2/arch-mingw.git && cd arch-mingw
+sudo docker build -t maxrd2/arch-mingw -f Dockerfile .
 ```
 
 # Usage
@@ -26,11 +25,11 @@ Compile your application:
 ```bash
 git clone 'https://github.com/maxrd2/DivvyDroid.git'
 mkdir DivvyDroid/build
-sudo docker run -v DivvyDroid:/home/devel -it maxrd2/arch-mingw /bin/bash -c "\
+sudo docker run -v DivvyDroid:/home/devel --rm -it maxrd2/arch-mingw /bin/bash -c "\
 	cd build && \
-	i686-w64-mingw32-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DAPP_VERSION=$appver .. && \
-    make -j\$(nproc) nsis \
-    "
+	i686-w64-mingw32-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr .. && \
+	make -j\$(nproc) nsis \
+	"
 ls -l build # windows binaries
 ```
 cmake, configure, etc commands should be prefixed by i686/x86_64 for 32/64bit builds e.g. `i686-w64-mingw32-cmake`, `x86_64-w64-mingw32-configure`
