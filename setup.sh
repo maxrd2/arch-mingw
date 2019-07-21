@@ -1,5 +1,7 @@
 #!/bin/bash
 
+use_cache= #192.168.1.5 # set to pacserve ip
+
 set -e
 info() { echo -e "\e[1;39m$@\e[m"; }
 
@@ -14,7 +16,7 @@ echo 'devel ALL=(ALL) NOPASSWD: /usr/sbin/pacman, /usr/sbin/makepkg' >>/etc/sudo
 info "Setting up pacman"
 pacman -Sy --noconfirm --noprogressbar pacman-contrib
 # select pacman mirrors
-echo 'Server = http://192.168.1.5:15678/pacman/$repo/$arch' >/etc/pacman.d/mirrorlist
+[[ -z "$use_cache" ]] && rm /etc/pacman.d/mirrorlist || echo 'Server = http://'$use_cache':15678/pacman/$repo/$arch' >/etc/pacman.d/mirrorlist
 curl -s 'https://www.archlinux.org/mirrorlist/?country=DE&country=CH&country=GB&country=US&protocol=https&ip_version=4&use_mirror_status=on' \
 	| sed 's|^#||;/^#/ d' | rankmirrors -n 6 - >>/etc/pacman.d/mirrorlist
 # add mingw repos - https://github.com/maxrd2/arch-repo/
@@ -23,9 +25,9 @@ cat >>/etc/pacman.conf <<EOF
 Include = /etc/pacman.d/mirrorlist
 [maxrd2]
 SigLevel = Optional TrustAll
-Server = http://192.168.1.5:15678/pacman/\$repo
-Server = https://github.com/maxrd2/arch-repo/releases/download/continuous
 EOF
+[[ ! -z "$use_cache" ]] && echo 'Server = http://'$use_cache':15678/pacman/$repo' >>/etc/pacman.conf
+echo 'Server = https://github.com/maxrd2/arch-repo/releases/download/continuous' >>/etc/pacman.conf
 # setup pacman
 pacman-key --init
 pacman-key --populate archlinux
