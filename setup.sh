@@ -11,7 +11,7 @@ echo "$_ps" >>/etc/skel/.bashrc
 echo -e "$_ps\nexport VISUAL=/usr/bin/vim" >>/etc/bash.bashrc
 groupmod -g 100 users
 useradd -m -d /home/devel -u 1000 -g users -G tty -s /bin/bash devel
-echo 'devel ALL=(ALL) NOPASSWD: /usr/sbin/pacman, /usr/sbin/makepkg' >>/etc/sudoers
+echo 'devel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 
 info "Setting up pacman"
 pacman -Sy --noconfirm --noprogressbar pacman-contrib
