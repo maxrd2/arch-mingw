@@ -13,7 +13,15 @@ groupmod -g 100 users
 useradd -m -d /home/devel -u 1000 -g users -G tty -s /bin/bash devel
 echo 'devel ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers
 
+# setup pacman
 info "Setting up pacman"
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+echo 'keyserver hkp://pool.sks-keyservers.net' >> /etc/pacman.d/gnupg/gpg.conf
+pacman-key --populate archlinux
+pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
+pacman-db-upgrade
+
 pacman -Sy --noconfirm --noprogressbar pacman-contrib
 # select pacman mirrors
 [[ -z "$use_cache" ]] && rm /etc/pacman.d/mirrorlist || echo 'Server = http://'$use_cache':15678/pacman/$repo/$arch' >/etc/pacman.d/mirrorlist
@@ -28,14 +36,9 @@ SigLevel = Optional TrustAll
 EOF
 [[ ! -z "$use_cache" ]] && echo 'Server = http://'$use_cache':15678/pacman/$repo' >>/etc/pacman.conf
 echo 'Server = https://github.com/maxrd2/arch-repo/releases/download/continuous' >>/etc/pacman.conf
-# setup pacman
-pacman-key --init
-pacman-key --populate archlinux
-pacman -Sy archlinux-keyring pacman --noconfirm --noprogressbar --needed --quiet
-pacman-db-upgrade
 
 info "Updating system"
-pacman -Su --noconfirm --noprogressbar --quiet
+pacman -Syu --noconfirm --noprogressbar --quiet
 
 info "Installing system packages"
 pacman -S --noconfirm --noprogressbar \
