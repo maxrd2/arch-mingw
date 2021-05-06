@@ -37,6 +37,9 @@ EOF
 [[ ! -z "$use_cache" ]] && echo 'Server = http://'$use_cache':15678/pacman/$repo' >>/etc/pacman.conf
 echo 'Server = https://github.com/maxrd2/arch-repo/releases/download/continuous' >>/etc/pacman.conf
 
+# tell pacman to extract localization
+sed -r -e '/^NoExtract/ s, [^ ]*(locale|i18n)[^/]*/[^ ]*,,g' -i /etc/pacman.conf
+
 info "Updating system"
 pacman -Syyu --noconfirm --noprogressbar --quiet
 
