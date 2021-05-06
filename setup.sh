@@ -38,7 +38,7 @@ EOF
 echo 'Server = https://github.com/maxrd2/arch-repo/releases/download/continuous' >>/etc/pacman.conf
 
 info "Updating system"
-pacman -Syu --noconfirm --noprogressbar --quiet
+pacman -Syyu --noconfirm --noprogressbar --quiet
 
 info "Installing system packages"
 pacman -S --noconfirm --noprogressbar \
